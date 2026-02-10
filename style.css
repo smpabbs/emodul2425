@@ -1,0 +1,427 @@
+/* =========================================
+   ROOT VARIABLES & GLOBAL RESET
+========================================= */
+:root {
+    /* Color Palette */
+    --primary-color: #0056b3;     /* Biru Utama */
+    --primary-light: #e7f1ff;     /* Biru Sangat Muda (Backgrounds) */
+    --accent-color: #0d6efd;      /* Biru Aksen */
+    --text-dark: #212529;
+    --text-muted: #6c757d;
+    --bg-body: #f4f6f9;
+    --white: #ffffff;
+    --border-color: #dee2e6;
+    --success: #198754;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    
+    /* Effects */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 15px rgba(0,0,0,0.08);
+    --radius: 8px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Poppins', sans-serif; /* Pastikan link font ada di HTML */
+    background-color: var(--bg-body);
+    color: var(--text-dark);
+    line-height: 1.6;
+    padding: 20px;
+}
+
+/* =========================================
+   LAYOUT CONTAINER
+========================================= */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--white);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+}
+.header h1 { color: var(--primary-color); font-weight: 700; margin-bottom: 5px; }
+.header p { color: var(--text-muted); font-size: 1.1em; }
+
+/* =========================================
+   TABS NAVIGATION
+========================================= */
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 25px;
+    background: var(--bg-body);
+    padding: 5px;
+    border-radius: var(--radius);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: all 0.3s ease;
+}
+
+.tab-btn:hover { color: var(--primary-color); background: rgba(0,0,0,0.03); }
+.tab-btn.active { background: var(--primary-color); color: var(--white); box-shadow: var(--shadow-sm); }
+.tab-btn i { margin-right: 8px; }
+
+/* =========================================
+   FILTERS & INPUTS
+========================================= */
+.filter-section {
+    background: var(--primary-light);
+    padding: 20px;
+    border-radius: var(--radius);
+    border: 1px solid #cce5ff;
+    margin-bottom: 25px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.form-group select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ced4da;
+    border-radius: var(--radius);
+    font-size: 1rem;
+    background-color: var(--white);
+    transition: border-color 0.2s;
+    cursor: pointer;
+}
+
+.form-group select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25);
+}
+
+/* =========================================
+   MODULE INFO & PREVIEW (IFRAME)
+========================================= */
+.module-card {
+    background: var(--white);
+    margin-bottom: 30px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    border-left: 5px solid var(--primary-color);
+    padding-left: 15px;
+}
+
+.info-header h3 { font-size: 1.4rem; color: var(--text-dark); margin: 0; }
+
+.meta-tags { display: flex; gap: 8px; margin-top: 5px; }
+.meta-badge {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+    background: var(--bg-body);
+    color: var(--text-muted);
+    border: 1px solid var(--border-color);
+}
+.meta-badge.writer { background: #fff3cd; color: #856404; border-color: #ffeeba; }
+
+/* --- PREVIEW CONTAINER (16:9 Responsive) --- */
+.preview-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* Aspect Ratio 16:9 */
+    background: #000;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    margin-bottom: 25px;
+}
+
+.preview-label {
+    position: absolute;
+    top: 0; left: 0; z-index: 10;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    padding: 5px 12px;
+    font-size: 0.8rem;
+    border-bottom-right-radius: 8px;
+    backdrop-filter: blur(4px);
+}
+
+#preview-frame {
+    position: absolute;
+    top: 0; left: 0; bottom: 0; right: 0;
+    width: 100%; height: 100%;
+    border: none;
+}
+
+/* =========================================
+   TABLE PENILAIAN (MATRIX)
+========================================= */
+.table-rating-container {
+    overflow-x: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+    background: var(--white);
+}
+
+#rating-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Agar scroll di HP */
+}
+
+#rating-table th {
+    background: #f8f9fa;
+    color: var(--text-dark);
+    font-weight: 600;
+    padding: 15px;
+    text-align: left;
+    border-bottom: 2px solid var(--border-color);
+}
+#rating-table th.text-center { text-align: center; }
+
+#rating-table td {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+}
+
+#rating-table tr:last-child td { border-bottom: none; }
+#rating-table tbody tr:hover { background-color: #f8faff; }
+
+/* Radio Button Styling */
+.radio-cell { cursor: pointer; transition: background 0.2s; }
+.radio-cell:hover { background-color: #e7f1ff; }
+.radio-cell input[type="radio"] {
+    transform: scale(1.6);
+    cursor: pointer;
+    accent-color: var(--primary-color);
+}
+
+/* =========================================
+   BUTTONS & RECAP TABLE
+========================================= */
+.action-buttons { text-align: center; margin-top: 20px; }
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    padding: 15px 40px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,86,179,0.3);
+    transition: all 0.3s;
+    display: inline-flex; align-items: center; gap: 10px;
+}
+.btn-primary:hover { background: #004494; transform: translateY(-2px); }
+
+/* Recap Table */
+.toolbar { margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-secondary {
+    padding: 10px 18px;
+    border: none;
+    border-radius: 20px;
+    background: var(--text-muted);
+    color: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: flex; align-items: center; gap: 8px;
+}
+.btn-secondary:hover { opacity: 0.9; }
+
+#rekap-table { width: 100%; border-collapse: collapse; }
+#rekap-table th, #rekap-table td { padding: 12px 15px; border-bottom: 1px solid var(--border-color); text-align: left; }
+#rekap-table th { background: var(--text-dark); color: white; text-transform: uppercase; font-size: 0.85rem; }
+#rekap-table tbody tr:nth-child(even) { background-color: #f8f9fa; }
+.score-cell { font-weight: bold; color: var(--primary-color); font-size: 1.1rem; }
+
+/* Status Badges */
+.badge { padding: 5px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; }
+.badge-pending { background: #fff3cd; color: #856404; }
+.badge-success { background: #d1e7dd; color: #0f5132; }
+
+.text-center { text-align: center !important; }
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+@media (max-width: 768px) {
+    .container { padding: 15px; }
+    .filter-section { grid-template-columns: 1fr; }
+    .info-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .btn-primary { width: 100%; justify-content: center; }
+    .table-responsive { overflow-x: scroll; }
+    
+    /* Font size adjustment */
+    #rating-table th, #rating-table td { padding: 10px; font-size: 0.9rem; }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+/* ================= DASHBOARD STATS (REVISI LIST VIEW) ================= */
+.stats-grid {
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* 1. KARTU TOTAL (HEADER) */
+.stat-card.total-card {
+    background: linear-gradient(135deg, #0056b3, #004494);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0, 86, 179, 0.25);
+    display: flex;
+    align-items: center;
+    gap: 25px;
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    background: rgba(255,255,255,0.2);
+    width: 70px;
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.stat-info { flex: 1; }
+.stat-info h4 { margin-bottom: 12px; font-size: 1.3rem; font-weight: 700; }
+.stat-info p { margin-top: 10px; font-size: 0.95rem; opacity: 0.9; font-weight: 500;}
+
+/* Progress Bar Container (Umum) */
+.progress-container {
+    background: rgba(0,0,0,0.2); /* Gelap transparan */
+    height: 12px;
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+}
+.progress-bar {
+    height: 100%;
+    background: #4cc9f0; /* Biru terang untuk Total */
+    width: 0%;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 10px;
+}
+
+/* 2. CONTAINER EVALUATOR (LIST KE BAWAH) */
+.evaluator-grid-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Jarak antar baris evaluator */
+}
+
+/* 3. KARTU EVALUATOR (ROW STYLE) */
+.eval-card {
+    background: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
+    
+    /* Layout Grid: Nama | Bar | Angka */
+    display: grid;
+    grid-template-columns: 180px 1fr 120px; 
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.eval-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    border-color: #0056b3;
+}
+
+/* Kolom 1: Nama Evaluator */
+.eval-name {
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+}
+.eval-name i { color: #aaa; font-size: 0.9rem; }
+
+/* Kolom 2: Progress Bar Evaluator */
+.eval-card .progress-container {
+    background: #f1f3f5; /* Abu terang */
+    height: 10px;
+}
+.eval-card .progress-bar {
+    background: #28a745; /* Hijau Default */
+}
+
+/* Kolom 3: Angka Persen */
+.eval-stats {
+    text-align: right;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: #0056b3;
+}
+.eval-stats small {
+    display: block;
+    font-weight: 400;
+    color: #888;
+    font-size: 0.75rem;
+}
+
+/* Warna Progress Bar Berdasarkan Level */
+.progress-low { background: #dc3545 !important; } /* Merah */
+.progress-med { background: #ffc107 !important; } /* Kuning */
+.progress-high { background: #28a745 !important; } /* Hijau */
+
+
+/* RESPONSIVE (HP) */
+@media (max-width: 768px) {
+    .eval-card {
+        grid-template-columns: 1fr; /* Tumpuk ke bawah di HP */
+        gap: 8px;
+        text-align: center;
+        padding: 15px;
+    }
+    .eval-name { justify-content: center; margin-bottom: 5px; }
+    .eval-stats { text-align: center; margin-top: 5px; }
+    .stat-card.total-card { flex-direction: column; text-align: center; }
+}

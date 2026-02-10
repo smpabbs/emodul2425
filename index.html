@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistem Penilaian Modul Digital</title>
+<link rel="stylesheet" href="style.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-clipboard-check"></i> Sistem Penilaian Modul</h1>
+        <p>Evaluasi dan Monitoring Kualitas Modul Pembelajaran</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('input')">
+            <i class="fas fa-edit"></i> Input Penilaian
+        </button>
+        <button class="tab-btn" onclick="showTab('rekap')">
+            <i class="fas fa-table"></i> Rekapan Lengkap
+        </button>
+    </div>
+
+    <div id="input-tab" class="tab-content active">
+        
+        <div class="filter-section">
+            <div class="form-group">
+                <label><i class="fas fa-user-tie"></i> Pilih Evaluator</label>
+                <select id="filter-evaluator" onchange="filterModulesByEvaluator()">
+                    <option value="">-- Pilih Nama Evaluator Terlebih Dahulu --</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-book"></i> Pilih Modul (Mapel/Bab)</label>
+                <select id="select-module" onchange="loadModuleData()" disabled>
+                    <option value="">-- Pilih Evaluator Dulu --</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="module-info" class="module-card" style="display:none;">
+            <div class="info-header">
+                <h3 id="info-title">Judul Modul</h3>
+                <div class="meta-tags">
+                    <span id="info-mapel" class="meta-badge">Mapel</span>
+                    <span id="info-level" class="meta-badge">Level</span>
+                    <span id="info-writer" class="meta-badge writer">Penulis</span>
+                </div>
+            </div>
+
+            <div class="preview-container">
+                <div class="preview-label"><i class="fas fa-desktop"></i> Preview Modul</div>
+                <iframe id="preview-frame" src="" frameborder="0" allowfullscreen></iframe>
+            </div>
+        </div>
+
+        <div id="form-penilaian" style="display:none;">
+            <div class="table-rating-container">
+                <table id="rating-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Aspek</th>
+                            <th style="width: 40%;">Kriteria Penilaian</th>
+                            <th class="text-center">1<br><small>Kurang</small></th>
+                            <th class="text-center">2<br><small>Cukup</small></th>
+                            <th class="text-center">3<br><small>Baik</small></th>
+                            <th class="text-center">4<br><small>Sangat Baik</small></th>
+                            <th class="text-center">5<br><small>Sempurna</small></th>
+                        </tr>
+                    </thead>
+                    <tbody id="rating-tbody">
+                        </tbody>
+                </table>
+            </div>
+            
+            <div class="action-buttons">
+                <button onclick="saveRating()" class="btn-primary">
+                    <i class="fas fa-save"></i> Simpan Penilaian
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="rekap-tab" class="tab-content" style="display:none;">
+       <div id="dashboard-stats" class="stats-grid">
+    <div class="stat-card total-card">
+        <div class="stat-icon"><i class="fas fa-chart-pie"></i></div>
+        <div class="stat-info">
+            <h4>Total Progress</h4>
+            <div class="progress-container">
+                <div class="progress-bar" id="total-progress-bar" style="width: 0%"></div>
+            </div>
+            <p id="total-progress-text">0/0 Modul Selesai (0%)</p>
+        </div>
+    </div>
+
+    <div id="evaluator-stats-container" class="evaluator-grid-container">
+        </div>
+</div>
+        <div class="toolbar">
+            <button onclick="exportToExcel()" class="btn-secondary" style="background: #107c41;">
+                <i class="fas fa-file-excel"></i> Export Excel
+            </button>
+            <button onclick="exportToPDF()" class="btn-secondary" style="background: #dc3545;">
+                <i class="fas fa-file-pdf"></i> Export PDF
+            </button>
+            <button onclick="renderRekap()" class="btn-secondary">
+                <i class="fas fa-sync"></i> Refresh Data
+            </button>
+        </div>
+
+        <div class="table-responsive">
+            <table id="rekap-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Evaluator</th>
+                        <th>Mapel</th>
+                        <th>Level</th>
+                        <th>Bab & Lesson</th>
+                        <th>Status</th>
+                        <th>Skor</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
