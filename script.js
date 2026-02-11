@@ -407,37 +407,62 @@ function showTab(tabName) {
     else buttons[1].classList.add('active');
 }
 
-// Export functions tetap sama seperti sebelumnya...
-function exportToExcel() {
-    const wb = XLSX.utils.book_new();
-    const exportData = dataBackup.map((item, idx) => {
-        const saved = rekapData.find(d => d.moduleIndex == idx);
-        return {
-            "Evaluator": item.evaluator,
-            "Mapel": item.mapel,
-            "Level": item.level,
-            "Bab": item.chapter,
-            "Judul": item.lesson,
-            "Status": saved ? "Selesai" : "Belum",
-            "Nilai": saved ? parseFloat(saved.finalScore) : 0
-        };
-    });
-    const ws = XLSX.utils.json_to_sheet(exportData);
-    XLSX.utils.book_append_sheet(wb, ws, "Rekapan");
-    XLSX.writeFile(wb, "Rekapan_Penilaian.xlsx");
-}
 
+// ================= UPDATE EXPORT PDF =================
 function exportToPDF() {
+    // Cek library
+    if (!window.jspdf) { 
+        alert("Library PDF belum dimuat. Tunggu sebentar atau refresh."); 
+        return; 
+    }
+
     const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.text("Rekapan Penilaian Modul", 14, 15);
-    doc.autoTable({
-        head: [['Evaluator', 'Mapel', 'Judul', 'Nilai']],
-        body: dataBackup.map((item, idx) => {
-            const saved = rekapData.find(d => d.moduleIndex == idx);
-            return [item.evaluator, item.mapel, item.lesson, saved ? saved.finalScore : "-"];
-        }),
-        startY: 20
+    
+    // Gunakan 'l' (landscape) agar tabel lebar muat
+    const doc = new jsPDF('l', 'mm', 'a4'); 
+    
+    // Judul Dokumen
+    doc.setFontSize(16);
+    doc.text("Laporan Rekapan Penilaian Modul Digital", 14, 15);
+    
+    doc.setFontSize(10);
+    doc.text(`Dicetak pada: ${new Date().toLocaleString()}`, 14, 22);
+
+    // Persiapkan Data Tabel
+    const tableRows = dataBackup.map((item, idx) => {
+        const saved = rekapData.find(d => d.moduleIndex == idx);
+        return [
+            idx + 1,
+            item.evaluator,
+            item.mapel,
+            item.level,
+            item.lesson,
+            item.writer,      // <--- KOLOM PENULIS DITAMBAHKAN
+            saved ? saved.finalScore : "-",
+            saved ? "Selesai" : "Belum"
+        ];
     });
-    doc.save("Rekapan.pdf");
+
+    // Generate Tabel
+    doc.autoTable({
+        head: [['No', 'Evaluator', 'Mapel', 'Lvl', 'Judul Modul', 'Penulis', 'Skor', 'Status']],
+        body: tableRows,
+        startY: 28,
+        theme: 'grid',
+        styles: { fontSize: 9, cellPadding: 3 },
+        headStyles: { fillColor: [0, 86, 179] }, // Warna Biru Header
+        columnStyles: {
+            0: { cellWidth: 10 }, // No
+            1: { cellWidth: 25 }, // Evaluator
+            2: { cellWidth: 25 }, // Mapel
+            3: { cellWidth: 15 }, // Level
+            4: { cellWidth: 'auto' }, // Judul (Otomatis sisa ruang)
+            5: { cellWidth: 35 }, // Penulis
+            6: { cellWidth: 15, halign: 'center' }, // Skor
+            7: { cellWidth: 20, halign: 'center' }  // Status
+        }
+    });
+    
+    const fileName = `Laporan_Modul_${new Date().toISOString().slice(0,10)}.pdf`;
+    doc.save(fileName);
 }
