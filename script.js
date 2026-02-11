@@ -407,6 +407,56 @@ function showTab(tabName) {
     else buttons[1].classList.add('active');
 }
 
+// ================= UPDATE EXPORT EXCEL (DENGAN PENULIS) =================
+function exportToExcel() {
+    // Cek library
+    if (typeof XLSX === 'undefined') { 
+        alert("Library Excel belum dimuat. Refresh halaman."); 
+        return; 
+    }
+
+    const wb = XLSX.utils.book_new();
+    
+    // Mapping Data
+    const exportData = dataBackup.map((item, idx) => {
+        const saved = rekapData.find(d => d.moduleIndex == idx);
+        return {
+            "No": idx + 1,
+            "Evaluator": item.evaluator,
+            "Penulis": item.writer,        // <--- KOLOM PENULIS DITAMBAHKAN
+            "Mata Pelajaran": item.mapel,
+            "Level": item.level,
+            "Judul Modul": item.lesson,
+            "Bab": item.chapter,
+            "Status": saved ? "Selesai" : "Belum",
+            "Nilai Akhir": saved ? parseFloat(saved.finalScore) : 0,
+            "Waktu Penilaian": saved ? new Date(saved.timestamp).toLocaleDateString() : "-"
+        };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    
+    // Atur lebar kolom agar rapi
+    const wscols = [
+        {wch: 5},  // No
+        {wch: 15}, // Evaluator
+        {wch: 20}, // Penulis (Baru)
+        {wch: 15}, // Mapel
+        {wch: 8},  // Level
+        {wch: 30}, // Judul
+        {wch: 10}, // Bab
+        {wch: 10}, // Status
+        {wch: 10}, // Nilai
+        {wch: 15}  // Waktu
+    ];
+    ws['!cols'] = wscols;
+
+    XLSX.utils.book_append_sheet(wb, ws, "Rekapan Penilaian");
+    
+    // Nama file pakai tanggal
+    const fileName = `Rekapan_Modul_${new Date().toISOString().slice(0,10)}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+}
 
 // ================= UPDATE EXPORT PDF =================
 function exportToPDF() {
